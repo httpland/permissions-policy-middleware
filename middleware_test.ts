@@ -1,9 +1,4 @@
-import {
-  type Options,
-  permissionsPolicy,
-  ResolvedOptions,
-  resolveOptions,
-} from "./middleware.ts";
+import { normalizeFeatures, permissionsPolicy } from "./middleware.ts";
 import {
   assert,
   assertEquals,
@@ -13,85 +8,64 @@ import {
   equalsResponse,
   Header,
   it,
+  type PermissionsPolicyFeatures,
+  type PolicyControlledFeatures,
 } from "./_dev_deps.ts";
 
-describe("resolveOptions", () => {
+describe("normalizeFeatures", () => {
   it("should return field name and value", () => {
-    const table: [Options, ResolvedOptions][] = [
+    const table: [PolicyControlledFeatures, PermissionsPolicyFeatures][] = [
       [
-        { features: {} },
-        {
-          fieldName: Header.PermissionsPolicy,
-          fieldValue: "",
-        },
+        {},
+        {},
       ],
       [
-        { features: {}, reportOnly: true },
-        {
-          fieldName: Header.PermissionsPolicyReportOnly,
-          fieldValue: "",
-        },
+        { accelerometer: "*", webShare: ["*"] },
+        { accelerometer: "*", "web-share": ["*"] },
       ],
       [
-        { features: {}, reportTo: "default" },
-        {
-          fieldName: Header.PermissionsPolicy,
-          fieldValue: "report-to=default",
-        },
+        { accelerometer: undefined },
+        {},
       ],
       [
         {
-          features: { accelerometer: "*", webShare: ["*"] },
-          reportTo: "default",
+          accelerometer: [],
+          ambientLightSensor: [],
+          autoplay: [],
+          battery: [],
+          bluetooth: [],
+          browsingTopics: [],
+          camera: [],
+          chUa: [],
+          chUaArch: [],
+          chUaBitness: [],
+          chUaFullVersion: [],
         },
         {
-          fieldName: Header.PermissionsPolicy,
-          fieldValue: "accelerometer=*, web-share=(*), report-to=default",
+          accelerometer: [],
+          "ambient-light-sensor": [],
+          autoplay: [],
+          battery: [],
+          bluetooth: [],
+          "browsing-topics": [],
+          camera: [],
+          "ch-ua": [],
+          "ch-ua-arch": [],
+          "ch-ua-bitness": [],
+          "ch-ua-full-version": [],
         },
       ],
-      [
-        {
-          features: {
-            accelerometer: [],
-            ambientLightSensor: [],
-            autoplay: [],
-            battery: [],
-            bluetooth: [],
-            browsingTopics: [],
-            camera: [],
-            chUa: [],
-            chUaArch: [],
-            chUaBitness: [],
-            chUaFullVersion: [],
-          },
-        },
-        {
-          fieldName: Header.PermissionsPolicy,
-          fieldValue:
-            "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), bluetooth=(), browsing-topics=(), camera=(), ch-ua=(), ch-ua-arch=(), ch-ua-bitness=(), ch-ua-full-version=()",
-        },
-      ],
-      [{ features: { accelerometer: "https://test.example/" } }, {
-        fieldName: Header.PermissionsPolicy,
-        fieldValue: `accelerometer="https://test.example"`,
-      }],
-      [{ features: { accelerometer: "https://あ亜.example/" } }, {
-        fieldName: Header.PermissionsPolicy,
-        fieldValue: `accelerometer="${
-          new URL("https://あ亜.example/").origin
-        }"`,
-      }],
     ];
 
     table.forEach(([input, expected]) => {
-      assertEquals(resolveOptions(input), expected);
+      assertEquals(normalizeFeatures(input), expected);
     });
   });
 });
 
 describe("permissionsPolicy", () => {
   it("should return same response if the response include header", async () => {
-    const middleware = permissionsPolicy({ features: {} });
+    const middleware = permissionsPolicy({});
     const initResponse = new Response(null, {
       headers: {
         [Header.PermissionsPolicy]: "",
@@ -104,7 +78,7 @@ describe("permissionsPolicy", () => {
   });
 
   it("should return response what include Permissions-Policy header", async () => {
-    const middleware = permissionsPolicy({ features: {} });
+    const middleware = permissionsPolicy({});
 
     const response = await middleware(
       new Request("test:"),
@@ -125,11 +99,13 @@ describe("permissionsPolicy", () => {
   });
 
   it("should return response what include Permissions-Policy-Report-Only header", async () => {
-    const middleware = permissionsPolicy({
-      features: { autoplay: "*" },
-      reportOnly: true,
-      reportTo: "default",
-    });
+    const middleware = permissionsPolicy(
+      { autoplay: "*" },
+      {
+        reportOnly: true,
+        reportTo: "default",
+      },
+    );
 
     const response = await middleware(
       new Request("test:"),
@@ -151,7 +127,10 @@ describe("permissionsPolicy", () => {
   });
 
   it("should throw error if the features include invalid value", () => {
-    const table: Options[] = [];
+    const table: PolicyControlledFeatures[] = [
+      { accelerometer: "" },
+      { chUaModel: [""] },
+    ];
 
     table.forEach((input) => {
       assertThrows(() => permissionsPolicy(input));
@@ -162,7 +141,7 @@ describe("permissionsPolicy", () => {
     let err;
 
     try {
-      permissionsPolicy({ features: { accelerometer: "" } });
+      permissionsPolicy({ accelerometer: "" });
     } catch (e) {
       err = e;
     } finally {
@@ -174,7 +153,7 @@ describe("permissionsPolicy", () => {
     let err;
 
     try {
-      permissionsPolicy({ features: {}, reportTo: "<invalid>" });
+      permissionsPolicy({}, { reportTo: "<invalid>" });
     } catch (e) {
       err = e;
     } finally {

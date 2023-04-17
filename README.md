@@ -33,7 +33,7 @@ import { assert } from "https://deno.land/std/testing/asserts.ts";
 declare const request: Request;
 declare const handler: Handler;
 
-const middleware = permissionsPolicy({ features: { autoplay: "*", usb: [] } });
+const middleware = permissionsPolicy({ autoplay: "*", usb: [] });
 const response = await middleware(request, handler);
 
 assert(response.headers.has("permissions-policy"));
@@ -45,25 +45,22 @@ yield:
 Permissions-Policy: autoplay=*, usb=()
 ```
 
-## Options
+## Features
 
-Middleware require options argument.
+Policy controlled feature name and value mapping.
 
-It is following fields:
-
-| Name       | Type                       | Required | Description                                       |
-| ---------- | -------------------------- | :------: | ------------------------------------------------- |
-| features   | `PolicyControlledFeatures` |   　✅   | Policy controlled feature name and value mapping. |
-| reportTo   | `string`                   |   　-    | Representation of `report-to` directive.          |
-| reportOnly | `boolean`                  |   　-    | Whether header is report-only or not.             |
-
-### Features
-
-`features` specifies a map of permissions policy feature name and value.
+This is a required argument.
 
 All
 [policy controlled features](https://github.com/w3c/webappsec-permissions-policy/blob/main/features.md)
 are supported.
+
+The following values can be specified for policy value.
+
+- `*`
+- `self`
+- URL origin string
+- Zero or more of the above items.
 
 ```ts
 import {
@@ -71,11 +68,9 @@ import {
 } from "https://deno.land/x/permissions_policy_middleware@$VERSION/mod.ts";
 
 const middleware = permissionsPolicy({
-  features: {
-    camera: "*",
-    payment: [],
-    pictureInPicture: ["self", "https://test.example"],
-  },
+  camera: "*",
+  payment: [],
+  pictureInPicture: ["self", "https://test.example"],
 });
 ```
 
@@ -84,6 +79,15 @@ yield:
 ```http
 Permissions-Policy: camera=*, payment=(), picture-in-picture=(self "https://test.example")
 ```
+
+## Options
+
+The following options can be specified for the middleware factory:
+
+| Name       | Type      | Description                              |
+| ---------- | --------- | ---------------------------------------- |
+| reportTo   | `string`  | Representation of `report-to` directive. |
+| reportOnly | `boolean` | Whether header is report-only or not.    |
 
 ### Report to
 
@@ -94,8 +98,7 @@ import {
   permissionsPolicy,
 } from "https://deno.land/x/permissions_policy_middleware@$VERSION/mod.ts";
 
-const middleware = permissionsPolicy({
-  features: {},
+const middleware = permissionsPolicy({}, {
   reportTo: "default",
 });
 ```
@@ -127,16 +130,18 @@ import { assert } from "https://deno.land/std/testing/asserts.ts";
 declare const request: Request;
 declare const handler: Handler;
 
-const middleware = permissionsPolicy({ features: {}, reportOnly: true });
+const middleware = permissionsPolicy({}, { reportOnly: true });
 const response = await middleware(request, handler);
 
 assert(response.headers.has("permissions-policy-report-only"));
 ```
 
-### Serialization
+## Serialization
 
 `features` and `reportTo` will serialize into
 [structured field value](https://www.rfc-editor.org/rfc/rfc8941.html).
+
+All feature name will convert to kebab-case.
 
 If the feature value is other than `*` and `self`, it is assumed to be an ASCII
 origin.
@@ -147,7 +152,7 @@ import {
 } from "https://deno.land/x/permissions_policy_middleware@$VERSION/mod.ts";
 
 const middleware = permissionsPolicy({
-  features: { geolocation: "https://text.example/geolocation" },
+  geolocation: "https://text.example/geolocation",
 });
 ```
 
@@ -157,7 +162,7 @@ yield:
 Permissions-Policy: geolocation=https://text.example
 ```
 
-#### Serialization error
+### Serialization error
 
 If serialization fails, an error may be thrown.
 
@@ -173,12 +178,8 @@ Cases that throw an error are as follows:
 import { permissionsPolicy } from "https://deno.land/x/permissions_policy_middleware@$VERSION/middleware.ts";
 import { assertThrows } from "https://deno.land/std/testing/asserts.ts";
 
-assertThrows(() =>
-  permissionsPolicy({ features: { battery: "<invalid:origin>" } })
-);
-assertThrows(() =>
-  permissionsPolicy({ features: {}, reportTo: "<invalid:sf-token>" })
-);
+assertThrows(() => permissionsPolicy({ battery: "<invalid:origin>" }));
+assertThrows(() => permissionsPolicy({}, { reportTo: "<invalid:sf-token>" }));
 ```
 
 ## Effects
