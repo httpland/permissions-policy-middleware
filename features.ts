@@ -3,7 +3,7 @@
 
 import type { AllowList } from "./types.ts";
 
-export type PermissionsPolicyFeatures =
+export type PolicyControlledFeatures =
   | StandardizedFeatures
   | ProposedFeatures
   | ExperimentalFeatures;
