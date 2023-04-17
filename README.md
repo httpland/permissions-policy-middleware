@@ -65,7 +65,7 @@ The following values can be specified for policy value.
 ```ts
 import {
   permissionsPolicy,
-} from "https://deno.land/x/permissions_policy_middleware@$VERSION/mod.ts";
+} from "https://deno.land/x/permissions_policy_middleware@$VERSION/middleware.ts";
 
 const middleware = permissionsPolicy({
   camera: "*",
@@ -96,7 +96,7 @@ Specify the `report-to` directive for the Reporting API.
 ```ts
 import {
   permissionsPolicy,
-} from "https://deno.land/x/permissions_policy_middleware@$VERSION/mod.ts";
+} from "https://deno.land/x/permissions_policy_middleware@$VERSION/middleware.ts";
 
 const middleware = permissionsPolicy({}, {
   reportTo: "default",
@@ -149,7 +149,7 @@ origin.
 ```ts
 import {
   permissionsPolicy,
-} from "https://deno.land/x/permissions_policy_middleware@$VERSION/mod.ts";
+} from "https://deno.land/x/permissions_policy_middleware@$VERSION/middleware.ts";
 
 const middleware = permissionsPolicy({
   geolocation: "https://text.example/geolocation",
