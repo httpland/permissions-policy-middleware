@@ -14,7 +14,7 @@ import { Header } from "./constants.ts";
 import type { PermissionsPolicy, PermissionsPolicyFeatures } from "./types.ts";
 import type { PolicyControlledFeatures } from "./features.ts";
 
-/** Middleware options. */
+/** Permissions policy options. */
 export interface PermissionsPolicyOptions
   extends Pick<PermissionsPolicy, "reportTo"> {
   /** Whether header is report-only or not.
