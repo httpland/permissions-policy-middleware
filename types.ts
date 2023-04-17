@@ -13,7 +13,7 @@ export interface PermissionsPolicy {
   /** Features name and value mapping. */
   readonly features: PermissionsPolicyFeatures;
 
-  /** Representation of "report-to" directive. */
+  /** Representation of `report-to` directive. */
   readonly reportTo?: string;
 }
 
