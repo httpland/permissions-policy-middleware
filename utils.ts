@@ -11,11 +11,7 @@ import {
   Token,
 } from "./deps.ts";
 import { AllowListValue, DirectiveValue } from "./constants.ts";
-import type {
-  AllowList,
-  PermissionsPolicy,
-  PermissionsPolicyDirectives,
-} from "./types.ts";
+import type { AllowList, PermissionsPolicy } from "./types.ts";
 
 /** Serialize {@link PermissionsPolicy} into string.
  * @throws {Error} It the policy is invalid.
@@ -23,9 +19,9 @@ import type {
 export function stringifyPermissionsPolicy(
   policy: Readonly<PermissionsPolicy>,
 ): string {
-  const { directives, features } = policy;
+  const { reportTo, features } = policy;
 
-  const entries = directives2Parameters(directives);
+  const entries = reportTo2Node(reportTo);
   const nodes = Object.entries(features).map(entry2Tuple).concat(entries);
   const sfv = new Dictionary(nodes);
 
@@ -60,12 +56,8 @@ function createItem(input: Token | String): Item {
   return new Item(input);
 }
 
-function directives2Parameters(
-  directives: PermissionsPolicyDirectives,
-): [string, Item][] {
-  const reportTo = directives[DirectiveValue.ReportTo];
+function reportTo2Node(reportTo: string | undefined): [string, Item][] {
+  if (!isString(reportTo)) return [];
 
-  return isString(reportTo)
-    ? [[DirectiveValue.ReportTo, new Item(new Token(reportTo))]]
-    : [];
+  return [[DirectiveValue.ReportTo, new Item(new Token(reportTo))]];
 }

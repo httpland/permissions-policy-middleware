@@ -10,42 +10,42 @@ import {
 describe("stringifyPermissionsPolicy", () => {
   it("should return string if the permissions policy is valid", () => {
     const table: [PermissionsPolicy, string][] = [
-      [{ features: {}, directives: {} }, ""],
-      [{ features: { "abc": "*" }, directives: {} }, "abc=*"],
+      [{ features: {} }, ""],
+      [{ features: { "abc": "*" } }, "abc=*"],
       [
-        { features: { "abc": "*", "def": "self" }, directives: {} },
+        { features: { "abc": "*", "def": "self" } },
         "abc=*, def=self",
       ],
       [
-        { features: { "def": "self", "abc": "*" }, directives: {} },
+        { features: { "def": "self", "abc": "*" } },
         "def=self, abc=*",
       ],
       [
-        { features: { "abc": ["*"] }, directives: {} },
+        { features: { "abc": ["*"] } },
         "abc=(*)",
       ],
       [
-        { features: { "abc": ["self"] }, directives: {} },
+        { features: { "abc": ["self"] } },
         "abc=(self)",
       ],
       [
-        { features: { "abc": "https://test.example" }, directives: {} },
+        { features: { "abc": "https://test.example" } },
         `abc="https://test.example/"`,
       ],
       [
-        { features: { "abc": "https://test.example/" }, directives: {} },
+        { features: { "abc": "https://test.example/" } },
         `abc="https://test.example/"`,
       ],
       [
-        { features: { "abc": "https://test.example/hoge" }, directives: {} },
+        { features: { "abc": "https://test.example/hoge" } },
         `abc="https://test.example/hoge"`,
       ],
       [
-        { features: { "abc": ["https://test.example/"] }, directives: {} },
+        { features: { "abc": ["https://test.example/"] } },
         `abc=("https://test.example/")`,
       ],
       [
-        { features: { "abc": "https://あ.example/" }, directives: {} },
+        { features: { "abc": "https://あ.example/" } },
         `abc="https://xn--l8j.example/"`,
       ],
       [
@@ -53,7 +53,6 @@ describe("stringifyPermissionsPolicy", () => {
           features: {
             "abc": ["https://test.example/", "https://cdn.test.example/"],
           },
-          directives: {},
         },
         `abc=("https://test.example/" "https://cdn.test.example/")`,
       ],
@@ -62,16 +61,13 @@ describe("stringifyPermissionsPolicy", () => {
           features: {
             "abc": ["https://test.example/", "https://test.example/"],
           },
-          directives: {},
         },
         `abc=("https://test.example/" "https://test.example/")`,
       ],
       [
         {
           features: {},
-          directives: {
-            "report-to": "default",
-          },
+          reportTo: "default",
         },
         `report-to=default`,
       ],
@@ -80,9 +76,7 @@ describe("stringifyPermissionsPolicy", () => {
           features: {
             "abc": "*",
           },
-          directives: {
-            "report-to": "default",
-          },
+          reportTo: "default",
         },
         `abc=*, report-to=default`,
       ],
@@ -95,10 +89,10 @@ describe("stringifyPermissionsPolicy", () => {
 
   it("should throw error if the input is invalid", () => {
     const table: PermissionsPolicy[] = [
-      { features: { "": "" }, directives: {} },
-      { features: { "": "*" }, directives: {} },
-      { features: { "a": "あ" }, directives: {} },
-      { features: { "a": "*" }, directives: { "report-to": "" } },
+      { features: { "": "" } },
+      { features: { "": "*" } },
+      { features: { "a": "あ" } },
+      { features: { "a": "*" }, reportTo: "" },
     ];
 
     table.forEach((input) => {
