@@ -1,3 +1,10 @@
+# [1.0.0-beta.2](https://github.com/httpland/permissions-policy-middleware/compare/1.0.0-beta.1...1.0.0-beta.2) (2023-04-17)
+
+
+### Features
+
+* **middleware:** change the middleware factory interface ([9cf1740](https://github.com/httpland/permissions-policy-middleware/commit/9cf1740eaa205681ea521fa794c8c4560495b05a))
+
 # 1.0.0-beta.1 (2023-04-17)
 
 
