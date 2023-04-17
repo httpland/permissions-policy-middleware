@@ -32,7 +32,25 @@ const DEFAULT_OPTIONS: PermissionsPolicyOptions = {
 
 /** Create permissions policy middleware.
  *
- * @throws {Error} If the {@link Options} is invalid.
+ * @example
+ * ```ts
+ * import {
+ *   type Handler,
+ *   permissionsPolicy,
+ * } from "https://deno.land/x/permissions_policy_middleware@$VERSION/mod.ts";
+ * import { assert } from "https://deno.land/std/testing/asserts.ts";
+ *
+ * declare const request: Request;
+ * declare const handler: Handler;
+ *
+ * const middleware = permissionsPolicy({ autoplay: "*", usb: [] });
+ * const response = await middleware(request, handler);
+ *
+ * assert(response.headers.has("permissions-policy"));
+ * ```
+ *
+ * @throws {Error} If the {@link PolicyControlledFeatures} is invalid.
+ * @throws {Error} If the {@link PermissionsPolicyOptions.reportTo} is invalid.
  */
 export function permissionsPolicy(
   features: PolicyControlledFeatures,
