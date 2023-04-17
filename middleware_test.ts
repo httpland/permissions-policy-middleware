@@ -73,12 +73,12 @@ describe("resolveOptions", () => {
       ],
       [{ features: { accelerometer: "https://test.example/" } }, {
         fieldName: Header.PermissionsPolicy,
-        fieldValue: `accelerometer="https://test.example/"`,
+        fieldValue: `accelerometer="https://test.example"`,
       }],
       [{ features: { accelerometer: "https://あ亜.example/" } }, {
         fieldName: Header.PermissionsPolicy,
         fieldValue: `accelerometer="${
-          new URL("https://あ亜.example/").toString()
+          new URL("https://あ亜.example/").origin
         }"`,
       }],
     ];

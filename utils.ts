@@ -36,7 +36,7 @@ function parseTokenOrString(input: string): Token | String {
     }
 
     default: {
-      return new String(new URL(input).toString());
+      return new String(new URL(input).origin);
     }
   }
 }

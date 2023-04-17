@@ -30,39 +30,39 @@ describe("stringifyPermissionsPolicy", () => {
       ],
       [
         { features: { "abc": "https://test.example" } },
-        `abc="https://test.example/"`,
+        `abc="https://test.example"`,
       ],
       [
         { features: { "abc": "https://test.example/" } },
-        `abc="https://test.example/"`,
+        `abc="https://test.example"`,
       ],
       [
         { features: { "abc": "https://test.example/hoge" } },
-        `abc="https://test.example/hoge"`,
+        `abc="https://test.example"`,
       ],
       [
         { features: { "abc": ["https://test.example/"] } },
-        `abc=("https://test.example/")`,
+        `abc=("https://test.example")`,
       ],
       [
         { features: { "abc": "https://あ.example/" } },
-        `abc="https://xn--l8j.example/"`,
+        `abc="https://xn--l8j.example"`,
       ],
       [
         {
           features: {
-            "abc": ["https://test.example/", "https://cdn.test.example/"],
+            "abc": ["https://test.example/", "https://cdn.test.example"],
           },
         },
-        `abc=("https://test.example/" "https://cdn.test.example/")`,
+        `abc=("https://test.example" "https://cdn.test.example")`,
       ],
       [
         {
           features: {
-            "abc": ["https://test.example/", "https://test.example/"],
+            "abc": ["https://test.example/", "https://test.example"],
           },
         },
-        `abc=("https://test.example/" "https://test.example/")`,
+        `abc=("https://test.example" "https://test.example")`,
       ],
       [
         {
