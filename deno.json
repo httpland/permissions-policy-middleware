@@ -1,0 +1,27 @@
+{
+  "tasks": {
+    "test": "deno test --import-map=_test_import_map.json --doc",
+    "build:npm": "deno run -A _tools/build_npm.ts"
+  },
+  "compilerOptions": {
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true
+  },
+  "fmt": {
+    "files": {
+      "exclude": ["CHANGELOG.md", "CODE_OF_CONDUCT.md"]
+    }
+  },
+  "lint": {
+    "files": {
+      "exclude": ["CHANGELOG.md", "CODE_OF_CONDUCT.md"]
+    }
+  },
+  "test": {
+    "files": {
+      "exclude": ["CHANGELOG.md", "CODE_OF_CONDUCT.md"]
+    }
+  }
+}
