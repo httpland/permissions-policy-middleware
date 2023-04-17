@@ -1,21 +1,23 @@
 // Copyright 2023-latest the httpland authors. All rights reserved. MIT license.
 // This module is browser compatible.
 
-import { type AllowListValue, DirectiveValue } from "./constants.ts";
+import { type AllowListValue } from "./constants.ts";
 
+/** Permissions policy feature name and value mapping. */
 export interface PermissionsPolicyFeatures {
   readonly [k: string]: AllowList | readonly AllowList[];
 }
 
-export interface PermissionsPolicyDirectives {
-  readonly [DirectiveValue.ReportTo]?: string;
-}
-
+/** Permission policy API. */
 export interface PermissionsPolicy {
+  /** Features name and value mapping. */
   readonly features: PermissionsPolicyFeatures;
-  readonly directives: PermissionsPolicyDirectives;
+
+  /** Representation of "report-to" directive. */
+  readonly reportTo?: string;
 }
 
+/** Permissions policy allowlist. */
 export type AllowList =
   | `${AllowListValue.Star}`
   | `${AllowListValue.Self}`

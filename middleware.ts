@@ -10,16 +10,19 @@ import {
   withHeader,
 } from "./deps.ts";
 import { stringifyPermissionsPolicy } from "./utils.ts";
-import { DirectiveValue, Header } from "./constants.ts";
-import type { PermissionsPolicyFeatures } from "./types.ts";
+import { Header } from "./constants.ts";
+import type { PermissionsPolicy, PermissionsPolicyFeatures } from "./types.ts";
 import type { PolicyControlledFeatures } from "./features.ts";
 
 /** Middleware options. */
-export interface Options {
+export interface Options extends Pick<PermissionsPolicy, "reportTo"> {
+  /** Policy controlled feature name and value mapping. */
   readonly features: PolicyControlledFeatures;
-  readonly reportTo?: string;
 
-  /**
+  /** Whether header is report-only or not.
+   * Depending on the value, the header will be:
+   * - `true`: `Permissions-Policy-Report-Only`
+   * - `false`: `Permissions-Policy`
    * @default false
    */
   readonly reportOnly?: boolean;
@@ -42,7 +45,9 @@ export function permissionsPolicy(options: Options): Middleware {
 }
 
 export interface ResolvedOptions {
+  /** Serialized header field name. */
   fieldName: string;
+  /** Serialized header field value. */
   fieldValue: string;
 }
 
@@ -59,7 +64,7 @@ export function resolveOptions(
   );
   const fieldValue = stringifyPermissionsPolicy({
     features: filtered,
-    directives: { [DirectiveValue.ReportTo]: reportTo },
+    reportTo,
   });
   const fieldName = reportOnly
     ? Header.PermissionsPolicyReportOnly

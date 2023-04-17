@@ -3,11 +3,13 @@
 
 import type { AllowList } from "./types.ts";
 
+/** All policy controlled features. */
 export type PolicyControlledFeatures =
   | StandardizedFeatures
   | ProposedFeatures
   | ExperimentalFeatures;
 
+/** The features what declared in a published version of the respective specification. */
 export interface StandardizedFeatures {
   /** The Accelerometer interface of the Sensor APIs provides on each reading the acceleration applied to the device along all three axes.
    *
@@ -243,6 +245,7 @@ export interface StandardizedFeatures {
   readonly xrSpatialTracking?: AllowList | readonly AllowList[];
 }
 
+/** Proposed features what have not yet been integrated into their respective specs. */
 export interface ProposedFeatures {
   /** Read from the device clipboard via the Clipboard API
    *
@@ -276,6 +279,7 @@ export interface ProposedFeatures {
   readonly speakerSelection?: AllowList | readonly AllowList[];
 }
 
+/** Experimentation features what have an explainer only. */
 export interface ExperimentalFeatures {
   /** Permission for Topics API.
    * @see [Topics API](https://patcg-individual-drafts.github.io/topics/)
